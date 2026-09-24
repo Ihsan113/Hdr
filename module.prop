@@ -1,6 +1,6 @@
 id=danzku_pq_global_hook
 name=DanzKu PQ Global Hook
-version=0.2
-versionCode=2
+version=0.3.0
+versionCode=4
 author=DanzKu
-description=Experimental MediaTek PQ global hook targeting enableDisplayColor.
+Experimental MediaTek PQ global hook with ARM64 remote-dlopen and enableDisplayColor hook.

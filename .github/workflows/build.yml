@@ -3,30 +3,63 @@ name: Build DanzKu PQ Global Hook
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Android NDK
-        uses: android-actions/setup-android@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: ''
+
       - name: Install NDK
-        run: sdkmanager "ndk;27.2.12479018"
-      - name: Build
         run: |
-          export ANDROID_NDK_HOME="$ANDROID_SDK_ROOT/ndk/27.2.12479018"
-          "$ANDROID_NDK_HOME/ndk-build" NDK_PROJECT_PATH=. NDK_APPLICATION_MK=Application.mk
-      - name: Package
+          sdkmanager --install "ndk;27.2.12479018"
+
+      - name: Set NDK path
         run: |
-          mkdir -p package/system/lib64 package/system/bin
-          cp libs/arm64-v8a/libdanzku_pq.so package/system/lib64/
-          cp libs/arm64-v8a/danzku-pq-injector package/system/bin/
-          cp module.prop service.sh package/
-          chmod 755 package/service.sh package/system/bin/danzku-pq-injector
-          cd package && zip -r ../DanzKu-PQ-Global-Hook-v0.2.zip .
-      - uses: actions/upload-artifact@v4
+          echo "ANDROID_NDK_HOME=$ANDROID_SDK_ROOT/ndk/27.2.12479018" >> "$GITHUB_ENV"
+
+      - name: Check NDK
+        run: |
+          "$ANDROID_NDK_HOME/ndk-build" --version
+
+      - name: Build Native
+        run: |
+          "$ANDROID_NDK_HOME/ndk-build" \
+            NDK_PROJECT_PATH=. \
+            NDK_APPLICATION_MK=Application.mk \
+            APP_BUILD_SCRIPT=Android.mk
+
+      - name: Package Magisk module
+        run: |
+          mkdir -p package/system/lib64
+          mkdir -p package/system/bin
+
+          cp libs/arm64-v8a/libdanzku_pq.so \
+            package/system/lib64/
+
+          cp libs/arm64-v8a/danzku-pq-injector \
+            package/system/bin/
+
+          cp module.prop package/
+          cp service.sh package/
+
+          chmod 755 package/service.sh
+          chmod 755 package/system/bin/danzku-pq-injector
+
+          cd package
+          zip -r ../DanzKu-PQ-Global-Hook-v0.2.zip .
+
+      - name: Upload ZIP
+        uses: actions/upload-artifact@v4
         with:
           name: DanzKu-PQ-Global-Hook-v0.2
           path: DanzKu-PQ-Global-Hook-v0.2.zip
