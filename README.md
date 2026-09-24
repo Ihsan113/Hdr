@@ -37,3 +37,9 @@ When the target function executes:
 - `HOOK enableDisplayColor(1)` or `(0)`
 
 This is experimental low-level code. Keep a recovery path (ADB/root shell) available in case the vendor PQ service crashes or restarts.
+
+
+## v0.3.3 fix
+- Corrected ARM64 remote-call sequence so the original PC instruction is not immediately replaced by a BRK-only path.
+- `dlopen()` success now requires a positive handle and verification that `libdanzku_pq.so` appears in the target `/proc/<pid>/maps`.
+- `service.sh` and native binaries are packaged with executable permissions, with a `post-fs-data.sh` permission safeguard.

@@ -2,12 +2,16 @@
 MODDIR=${0%/*}
 LOG=/sdcard/DanzKu_PQ_Global_Hook.txt
 
+chmod 755 "$MODDIR/service.sh" 2>/dev/null
+chmod 755 "$MODDIR/system/bin/danzku-pq-injector" 2>/dev/null
+chmod 755 "$MODDIR/system/bin/danzku-pq-status" 2>/dev/null
+
 log_txt() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$LOG"
 }
 
 log_txt "========================================"
-log_txt "DanzKu PQ Global Hook v0.2"
+log_txt "DanzKu PQ Global Hook v0.3.2"
 log_txt "Service started"
 
 PID="$(pidof vendor.mediatek.hardware.pq@2.2-service 2>/dev/null)"
@@ -22,7 +26,7 @@ if [ -x "$MODDIR/system/bin/danzku-pq-injector" ]; then
     RC=$?
     log_txt "Injector exit code=$RC"
 else
-    log_txt "ERROR: injector not found"
+    log_txt "ERROR: injector not executable/found"
 fi
 
 log_txt "Service finished"
