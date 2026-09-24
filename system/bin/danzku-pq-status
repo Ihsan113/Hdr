@@ -1,0 +1,13 @@
+#!/system/bin/sh
+echo "=== DanzKu PQ Global Hook v0.2 ==="
+echo "PID:"
+pidof vendor.mediatek.hardware.pq@2.2-service 2>/dev/null || echo "not running"
+echo
+echo "Target:"
+ls -l /vendor/lib64/hw/mt6789/vendor.mediatek.hardware.pq@2.15-impl.so 2>/dev/null || true
+echo
+echo "Symbol:"
+readelf -Ws /vendor/lib64/hw/mt6789/vendor.mediatek.hardware.pq@2.15-impl.so 2>/dev/null |
+grep 'PictureQuality.*enableDisplayColor' || true
+echo
+tail -80 /data/local/tmp/danzku_pq_global_hook.log 2>/dev/null || true
