@@ -6,6 +6,10 @@
 #include <ctime>
 #include <sys/ptrace.h>
 #include <linux/ptrace.h>
+
+#ifndef NT_PRSTATUS
+#define NT_PRSTATUS 1
+#endif
 #include <sys/wait.h>
 #include <sys/uio.h>
 #include <sys/types.h>
@@ -227,7 +231,7 @@ int main(int argc,char** argv) {
 
     log_line("ptrace attached");
 
-    bool ok=remote_dlopen(pid,lib);
+    bool ok=remote_dlopen(pid,lib.c_str());
 
     ptrace(PTRACE_DETACH,pid,0,0);
     log_line("ptrace detached");
